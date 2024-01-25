@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { useEffect } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [photos, setPhotos] = useState([]);
+
+  useEffect(() => {
+    const url = "https://jsonplaceholder.typicode.com/photos";
+    fetch(url)
+      .then((response) => response.json())
+      .then((photosData) => {
+        const filteredPhotos = photosData.filter((data) => data.id % 100 === 0);
+        setPhotos(filteredPhotos);
+      });
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      {photos.map((photo) => (
+        <div key={photo.id} className="photo">
+          <img src={photo.url} alt={photo.title} />
+          <span className="info">
+            ID: <span className="id">{photo.id}</span> - TITLE:{" "}
+            <span className="title">
+              <a
+                href={`https://jsonplaceholder.typicode.com/photos/${photo.id}`}
+              >
+                {photo.title}
+              </a>
+            </span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-export default App
+export default App;
